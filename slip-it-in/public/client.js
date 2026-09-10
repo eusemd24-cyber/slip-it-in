@@ -15,12 +15,14 @@ function showScreen(screenName) {
   screens[screenName].classList.add('active');
 }
 
+// 1. Create Room
 document.getElementById('create-btn').addEventListener('click', () => {
   const name = document.getElementById('player-name').value.trim();
   if (!name) return alert('Please enter your name.');
   socket.emit('createRoom', { name });
 });
 
+// 2. Join Room
 document.getElementById('join-btn').addEventListener('click', () => {
   const name = document.getElementById('player-name').value.trim();
   const roomCode = document.getElementById('room-code-input').value.trim();
@@ -28,6 +30,7 @@ document.getElementById('join-btn').addEventListener('click', () => {
   socket.emit('joinRoom', { name, roomCode });
 });
 
+// 3. Settings updates
 document.getElementById('setting-mode').addEventListener('change', updateHostSettings);
 document.getElementById('setting-handsize').addEventListener('change', updateHostSettings);
 
@@ -38,20 +41,33 @@ function updateHostSettings() {
   socket.emit('updateSettings', { roomCode: currentRoom, mode, handSize });
 }
 
+// 4. Start Game
 document.getElementById('start-game-btn').addEventListener('click', () => {
   socket.emit('initiateGame', { roomCode: currentRoom });
 });
 
+// 5. Dynamic Input Addition
+document.getElementById('add-phrase-btn').addEventListener('click', () => {
+  const container = document.getElementById('custom-inputs-list');
+  const count = container.querySelectorAll('.custom-word-input').length + 1;
+  const newInput = document.createElement('input');
+  newInput.type = 'text';
+  newInput.className = 'custom-word-input';
+  newInput.placeholder = `Phrase ${count}`;
+  container.appendChild(newInput);
+});
+
+// 6. Submit Custom Words
 document.getElementById('submit-words-btn').addEventListener('click', () => {
   const inputs = document.querySelectorAll('.custom-word-input');
   const words = Array.from(inputs).map(i => i.value.trim()).filter(w => w !== '');
-  
-  if (words.length === 0) return alert('Please enter at least one word!');
   
   socket.emit('submitCustomWords', { roomCode: currentRoom, words });
   document.getElementById('submission-status').innerText = "Submitted! Waiting for other players...";
   document.getElementById('submit-words-btn').disabled = true;
 });
+
+// --- Socket Event Listeners ---
 
 socket.on('errorMsg', (msg) => alert(msg));
 
