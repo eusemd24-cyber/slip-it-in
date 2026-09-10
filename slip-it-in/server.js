@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
-const DEFAULT_WORDS = require('./words'); // <-- Imports from words.js
+const DEFAULT_WORDS = require('./words');
 
 const app = express();
 const server = http.createServer(app);
@@ -23,6 +23,21 @@ function generateRoomCode() {
 
 function shuffleArray(array) {
   return array.sort(() => Math.random() - 0.5);
+}
+
+// Function to pad any word pool up to at least 50 words using default words
+function padWordPool(pool, minSize = 50) {
+  let padded = [...pool];
+  if (padded.length >= minSize) return padded;
+
+  let availableDefaults = shuffleArray([...DEFAULT_WORDS]);
+  while (padded.length < minSize) {
+    if (availableDefaults.length === 0) {
+      availableDefaults = shuffleArray([...DEFAULT_WORDS]);
+    }
+    padded.push(availableDefaults.pop());
+  }
+  return padded;
 }
 
 io.on('connection', (socket) => {
@@ -109,7 +124,9 @@ io.on('connection', (socket) => {
     const game = games[roomCode];
     if (!game) return;
 
-    game.wordPool = shuffleArray(pool);
+    // Pad pool to ensure at least 50 words total, then shuffle
+    const paddedPool = padWordPool(pool, 50);
+    game.wordPool = shuffleArray(paddedPool);
     game.state = 'playing';
 
     Object.keys(game.players).forEach(pId => {
