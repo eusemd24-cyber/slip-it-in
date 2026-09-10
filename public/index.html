@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slip It In!</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🤫 Slip It In!</h1>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="screen active">
+      <input type="text" id="player-name" placeholder="Enter Your Name" maxlength="15">
+      <div class="button-group">
+        <button id="create-btn" class="btn primary">Create New Game</button>
+      </div>
+      <hr>
+      <input type="text" id="room-code-input" placeholder="4-Letter Room Code" style="text-transform: uppercase;" maxlength="4">
+      <button id="join-btn" class="btn secondary">Join Game</button>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobby-screen" class="screen">
+      <div class="room-code-display">
+        Room Code: <span id="display-room-code">----</span>
+      </div>
+
+      <div id="host-settings" class="settings-card hidden">
+        <h3>Game Settings</h3>
+        <label>
+          Mode:
+          <select id="setting-mode">
+            <option value="default">Default Phrases</option>
+            <option value="custom">Players Submit Words</option>
+          </select>
+        </label>
+        <label>
+          Cards in Hand:
+          <input type="number" id="setting-handsize" value="4" min="1" max="10">
+        </label>
+      </div>
+
+      <h3>Players Connected:</h3>
+      <ul id="player-list" class="badge-list"></ul>
+
+      <button id="start-game-btn" class="btn primary hidden">Start Game</button>
+      <p id="waiting-msg">Waiting for host to start the game...</p>
+    </div>
+
+    <!-- CUSTOM SUBMISSION SCREEN -->
+    <div id="submission-screen" class="screen">
+      <h2>Submit Your Phrases</h2>
+      <p>Enter phrases for the deck (add as many as you want!):</p>
+      
+      <div id="custom-inputs-list">
+        <input type="text" class="custom-word-input" placeholder="Phrase 1">
+        <input type="text" class="custom-word-input" placeholder="Phrase 2">
+      </div>
+
+      <button id="add-phrase-btn" class="btn secondary" style="margin-bottom: 12px;">+ Add Another Phrase</button>
+      <button id="submit-words-btn" class="btn primary">Ready!</button>
+      <p id="submission-status"></p>
+    </div>
+
+    <!-- GAME PLAY SCREEN -->
+    <div id="game-screen" class="screen">
+      <div class="deck-info">Remaining Deck: <span id="remaining-deck">0</span></div>
+      
+      <h2>Your Active Hand</h2>
+      <div id="cards-container" class="cards-grid"></div>
+
+      <h2>Leaderboard</h2>
+      <ul id="scoreboard" class="badge-list"></ul>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>
